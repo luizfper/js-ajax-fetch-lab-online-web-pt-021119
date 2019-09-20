@@ -8,18 +8,62 @@ function getToken() {
 }
 
 function forkRepo() {
-  const repo = 'learn-co-curriculum/js-ajax-fetch-lab';
-  //use fetch to fork it!
+	const token = getToken()
+  const repo = 'https://api.github.com/repos/learn-co-curriculum/js-ajax-fetch-lab/forks';
+	fetch(repo,
+		{
+			method: 'POST',
+			headers: {
+				Authorization: `token ${token}`
+			}
+		})
+	.then(response => response.json())
+	.then(json => showResults(json))
 }
 
 function showResults(json) {
-  //use this function to display the results from forking via the API
+	document.getElementById('results').innerHTML = `<h1><a href='${json.html_url}'>go to repo</a></h1>`
 }
 
 function createIssue() {
-  //use this function to create an issue based on the values input in index.html
+	const token = getToken()
+	const body = {body: `${document.getElementById('body').value}`,title: `${document.getElementById('title').value}`}
+	// const title = {title: `${document.getElementById('title').value}`}
+  const repo = 'https://api.github.com/repos/luizfper/js-ajax-fetch-lab/issues';
+	fetch(repo,
+		{
+			method: 'POST',
+			body: JSON.stringify(body),
+			// title: JSON.stringify(title),
+			headers: {
+				authorization: `token ${token}`,
+
+			}
+		}
+	)
+	.then(response => response.json())
+	.then(getIssues)
 }
 
 function getIssues() {
-  //once an issue is submitted, fetch all open issues to see the issues you are creating
+  const token = getToken()
+	const repo = 'https://api.github.com/repos/luizfper/js-ajax-fetch-lab/issues';
+	fetch(repo,
+		{
+			headers: {
+				authorization: `token ${token}`,
+			}
+		}
+	)
+	.then(response => response.json())
+	.then(json => showIssues(json))
+
+}
+
+function showIssues(json){
+	debugger
+	document.getElementById('issues').innerHTML = '<ul id=issueslist></ul>'
+	var htmlIssues = ''
+	json.forEach(issue => htmlIssues += `<li>${issue.title}</li>`)
+	document.getElementById('issueslist').innerHTML = htmlIssues
 }
